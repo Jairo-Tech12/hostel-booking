@@ -846,7 +846,7 @@ nav {
         .hero {
     background: url('contact/c7.jpg') no-repeat center center/cover;
     width: 99%;
-    height: 300px;
+    height: 400px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -855,8 +855,8 @@ nav {
     font-size: 2rem;
     font-weight: bold;
     text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
-    border-radius: 10px;
-    margin-top: 70px;/* Avoids overlap with fixed navbar */
+    border-radius: 15px;
+    margin-top: 90px;/* Avoids overlap with fixed navbar */
     margin-left: 7px; 
     padding: 20px;
 }

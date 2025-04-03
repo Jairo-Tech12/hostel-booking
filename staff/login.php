@@ -68,7 +68,33 @@ $conn->close();
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <style>
+    
+
+</head>
+<body>
+
+    <div class="login-box">
+        <h2>Staff Login</h2>
+
+        <?php if (!empty($error)) { ?>
+            <div class="alert alert-danger"><?php echo $error; ?></div>
+        <?php } ?>
+
+        <form method="POST" action="login.php">
+            <div class="mb-3">
+                <input type="email" name="email" class="form-control" placeholder="Email" required>
+            </div>
+
+            <div class="mb-3">
+                <input type="password" name="password" class="form-control" placeholder="enter your password" required>
+            </div>
+
+            <button type="submit" class="btn btn-login">Login</button>
+        </form>
+    </div>
+
+</body>
+<style>
         /* Body Styling */
         body {
             display: flex;
@@ -76,14 +102,14 @@ $conn->close();
             align-items: center;
             height: 100vh;
             margin: 0;
-            background: linear-gradient(135deg, #1abc9c, #2c3e50);
+            background: linear-gradient(135deg, #1abc9c,rgb(7, 9, 10));
             backdrop-filter: blur(5px);
             font-family: 'Poppins', sans-serif;
         }
 
         /* Login Card */
         .login-box {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(216, 146, 146, 0.15);
             padding: 40px;
             border-radius: 12px;
             box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
@@ -160,29 +186,5 @@ $conn->close();
                 font-size: 22px;
             }
         }
-    </style>
-</head>
-<body>
-
-    <div class="login-box">
-        <h2>Staff Login</h2>
-
-        <?php if (!empty($error)) { ?>
-            <div class="alert alert-danger"><?php echo $error; ?></div>
-        <?php } ?>
-
-        <form method="POST" action="login.php">
-            <div class="mb-3">
-                <input type="email" name="email" class="form-control" placeholder="Email" required>
-            </div>
-
-            <div class="mb-3">
-                <input type="password" name="password" class="form-control" placeholder="Password" required>
-            </div>
-
-            <button type="submit" class="btn btn-login">Login</button>
-        </form>
-    </div>
-
-</body>
+        </style>
 </html>

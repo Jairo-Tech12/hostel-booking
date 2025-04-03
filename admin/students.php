@@ -59,11 +59,10 @@ $result = $conn->query($sql);
     <nav class="sidebar" id="sidebar">
         <h3 class="text-center text-white">Admin Panel</h3>
         <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link" href="admin.php"><i class="bi bi-house-door"></i> Home</a>
+        <li class="nav-item"><a class="nav-link active" href="admin.php"><i class="bi bi-person"></i> Profile</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" href="students.php"><i class="bi bi-people"></i> Students</a>
+                <a class="nav-link" href="students.php"><i class="bi bi-people"></i> Students</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="staff.php"><i class="bi bi-person-badge"></i> Staff</a>
@@ -74,9 +73,15 @@ $result = $conn->query($sql);
             <li class="nav-item">
                 <a class="nav-link" href="bookings.php"><i class="bi bi-journal-bookmark"></i> Bookings</a>
             </li>
-        </ul>
         
-        <a href="?logout=true" class="btn-logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        <li class="nav-item">
+                <a class="nav-link" href="incidents.php">
+                    <i class="bi bi-exclamation-triangle"></i> Incidents
+                </a>
+            </li>
+            </ul>
+        <!-- Logout Button -->
+        <a href="login-admin.php" class="btn btn-danger text-center mt-3">Logout</a>
     </nav>
 
     <!-- Toggle Button -->
@@ -177,7 +182,7 @@ $result = $conn->query($sql);
             font-size: 18px;
         }
 
-        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+        .sidebar .nav-link:hover{
             background-color: #1abc9c;
         }
 

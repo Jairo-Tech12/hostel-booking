@@ -55,104 +55,7 @@ if (isset($_GET['logout'])) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            display: flex;
-        }
 
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background-color: #2c3e50;
-            padding-top: 20px;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .sidebar .nav-link {
-            color: white !important;
-            padding: 12px 20px;
-            display: block;
-            font-size: 18px;
-        }
-
-        .sidebar .nav-link:hover {
-            background-color: #1abc9c;
-        }
-
-        .sidebar .nav-link.active {
-            background-color: #1abc9c;
-        }
-
-        .btn-logout {
-            background-color: #e74c3c;
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-            width: 80%;
-            margin: 20px auto;
-            text-align: center;
-            transition: 0.3s;
-        }
-
-        .btn-logout:hover {
-            background-color: #c0392b;
-        }
-
-        .main-content {
-            margin-left: 250px;
-            padding: 20px;
-            width: 100%;
-            transition: margin-left 0.3s ease-in-out;
-        }
-
-        .toggle-btn {
-            position: fixed;
-            top: 15px;
-            left: 260px;
-            font-size: 24px;
-            background: none;
-            border: none;
-            color: #2c3e50;
-            cursor: pointer;
-            transition: left 0.3s ease-in-out;
-        }
-
-        /* Hide sidebar */
-        .sidebar.hidden {
-            width: 0;
-            overflow: hidden;
-        }
-
-        .main-content.expanded {
-            margin-left: 0;
-        }
-
-        .toggle-btn.shifted {
-            left: 10px;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 0;
-                overflow: hidden;
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .toggle-btn {
-                left: 10px;
-            }
-        }
-    </style>
 </head>
 <body>
 
@@ -160,14 +63,13 @@ if (isset($_GET['logout'])) {
     <nav class="sidebar" id="sidebar">
         <h3 class="text-center text-white">Admin Panel</h3>
         <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link" href="admin.php"><i class="bi bi-house-door"></i> Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link active" href="staff.php"><i class="bi bi-person-badge"></i> Staff</a>
+        <li class="nav-item"><a class="nav-link active" href="admin.php"><i class="bi bi-person"></i> Profile</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="students.php"><i class="bi bi-people"></i> Students</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="staff.php"><i class="bi bi-person-badge"></i> Staff</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="hostels.php"><i class="bi bi-building"></i> Hostels</a>
@@ -175,9 +77,15 @@ if (isset($_GET['logout'])) {
             <li class="nav-item">
                 <a class="nav-link" href="bookings.php"><i class="bi bi-journal-bookmark"></i> Bookings</a>
             </li>
-        </ul>
         
-        <a href="?logout=true" class="btn-logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        <li class="nav-item">
+                <a class="nav-link" href="incidents.php">
+                    <i class="bi bi-exclamation-triangle"></i> Incidents
+                </a>
+            </li>
+            </ul>
+        <!-- Logout Button -->
+        <a href="logout.php" class="btn btn-danger text-center mt-3">Logout</a>
     </nav>
 
     <!-- Toggle Button -->
@@ -252,4 +160,100 @@ if (isset($_GET['logout'])) {
     </script>
 
 </body>
+<style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #2c3e50;
+            padding-top: 20px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .sidebar .nav-link {
+            color: white !important;
+            padding: 12px 20px;
+            display: block;
+            font-size: 18px;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #1abc9c;
+        }
+
+        
+
+        .btn-logout {
+            background-color: #e74c3c;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            width: 80%;
+            margin: 20px auto;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .btn-logout:hover {
+            background-color: #c0392b;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            width: 100%;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .toggle-btn {
+            position: fixed;
+            top: 15px;
+            left: 260px;
+            font-size: 24px;
+            background: none;
+            border: none;
+            color: #2c3e50;
+            cursor: pointer;
+            transition: left 0.3s ease-in-out;
+        }
+
+        /* Hide sidebar */
+        .sidebar.hidden {
+            width: 0;
+            overflow: hidden;
+        }
+
+        .main-content.expanded {
+            margin-left: 0;
+        }
+
+        .toggle-btn.shifted {
+            left: 10px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+                overflow: hidden;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .toggle-btn {
+                left: 10px;
+            }
+        }
+    </style>
 </html>

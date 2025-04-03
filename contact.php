@@ -155,11 +155,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($conn->query($sql) === TRUE) {
         // Redirect to the same page to prevent duplicate submissions
         header("Location: ".$_SERVER['PHP_SELF']);
-        exit();
-    } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
-    }
+        echo "<script>
+        alert('Login successful!');
+        window.location.href = 'contact.php';
+        </script>";
+exit();
+} else {
+$error = "Incorrect password!";
 }
+} else {
+$error = "You have not registered.";
+}
+
 
 // Close connection
 $conn->close();
@@ -898,11 +905,13 @@ h3 {
     }
 }
 .carousel {
+    margin-top: 100px;
     width: 100%; /* Adjust width as needed */
     max-width: 1290px; /* Prevents it from getting too large */
     margin: auto; /* Centers the carousel */
     border-radius: 15px; /* Rounds the corners */
     overflow: hidden; /* Prevents image overflow */
+    transition: transform 0.3s ease;
 }
 
 /* Style carousel images */
@@ -913,6 +922,7 @@ h3 {
     border-radius: 15px; /* Smooth rounded corners */
     filter: brightness(1.1) contrast(1.05); /* Enhances image clarity */
     padding-top: 5px;
+    transition: transform 0.3s ease;
 }
 
 /* Style the captions */

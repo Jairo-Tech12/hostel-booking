@@ -208,14 +208,14 @@ $conn->close();
         <?php while ($row = $result->fetch_assoc()) { 
             // Assign 4 unique images for each hostel based on its name
             $hostel_images = [
-                "Victoria Hostel" => ["images/victoria/vic.jpg", "images/victoria/vic1.jpg", "images/victoria/vic2.jpg", "images/victoria/vic3.jpg"],
+                "Victoria Hostel" => ["images/victoria/vic4.jpg", "images/victoria/vic1.jpg", "images/victoria/vic.jpg", "images/victoria/gate.jpg"],
                 "Turkwel Hostel" => ["images/turkwel/tur.jpg", "images/turkwel/tur1.jpg", "images/turkwel/tur2.jpg", "images/turkwel/tur3.jpg"],
                 "Baringo Hostel" => ["images/baringo/bar.jpg", "images/baringo/bar1.jpg", "images/baringo/bar2.jpg", "images/baringo/bar3.jpg"],
-                "Athi Hostel" => ["images/athi/ele.jpg", "images/athi/ele1.jpg", "images/athi/ele2.jpg", "images/athi/ele3.jpg"],
+                "Athi Hostel" => ["images/athi/athi1.jpg", "images/athi/athi3.jpg", "images/athi/athu2.jpg", "images/athi/athi4.jpg"],
                 "Yatta Hostel" => ["images/yatta/yatta.jpg", "images/yatta/yatta1.jpg", "images/yatta/yatta2.jpg", "images/yatta/yatta3.jpg"],
                 "Magadi Hostel" => ["images/magadi/maga.jpg", "images/magadi/maga1.jpg", "images/magadi/maga2.jpg", "images/magadi/maga3.jpg"],
-                "Turkana Hostel" => ["images/turkana/tur.jpg", "images/turkana/tur1.jpg", "images/turkana/tur2.jpg", "images/turkana/tur3.jpg"],
-                "Elementaita Hostel" => ["images/elementaita/ele1.jpg", "images/elementaita/ele.jpg", "images/elementaita/ele2.jpg", "images/elementaita/ele3.jpg"]
+                "Turkana Hostel" => ["images/turkana/tur.jpg", "images/turkana/tur1.jpg", "images/turkana/tur.jpg", "images/turkana/tur3.jpg"],
+                "Elementaita Hostel" => ["images/elementaita/ele1.jpg", "images/elementaita/ele4.jpg", "images/elementaita/ele2.jpg", "images/elementaita/ele3.jpg"]
             ];
 
             // If the hostel name is not in the array, use a default set of images
@@ -589,25 +589,24 @@ h3 {
 
 
 .banner {
-    width: 100%;
-    height: 300px; /* Adjust height as needed */
-    background: url('imgs/rift.jpg') no-repeat center center/cover; /* Add your banner image */
+    background: url('images/victoria/vic.jpg') no-repeat center center/cover; /* Add your banner image */
+    width: 99%;
+    height: 400px;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
-    border-radius: 20px;
+    color: white;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+    border-radius: 15px;
+    margin-top: 55px;/* Avoids overlap with fixed navbar */
+    margin-left: 7px; 
+    padding: 20px;
 }
 
-.banner-overlay {
-    background: rgba(0, 0, 0, 0.5); /* Dark overlay for readability */
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}
+
 
 .banner h1 {
     font-size: 50px;

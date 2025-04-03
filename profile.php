@@ -15,7 +15,7 @@ if ($conn->connect_error) {
 
 // Check if user is logged in
 if (!isset($_SESSION['student_id'])) {
-    header("Location: login.php"); // Redirect if not logged in
+    header("Location: login.php");
     exit();
 }
 
@@ -24,14 +24,13 @@ $student_id = $_SESSION['student_id'];
 // Handle profile picture upload
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profile_picture'])) {
     $target_dir = "uploads/";
-    $image_name = time() . "_" . basename($_FILES["profile_picture"]["name"]); // Unique name
+    $image_name = time() . "_" . basename($_FILES["profile_picture"]["name"]);
     $target_file = $target_dir . $image_name;
     $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
     $allowed_types = ["jpg", "jpeg", "png", "gif"];
 
     if (in_array($imageFileType, $allowed_types)) {
         if (move_uploaded_file($_FILES["profile_picture"]["tmp_name"], $target_file)) {
-            // Update profile image path in the database
             $query = "UPDATE students SET profile_image = ? WHERE id = ?";
             $stmt = $conn->prepare($query);
             $stmt->bind_param("si", $target_file, $student_id);
@@ -41,12 +40,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profile_picture'])) 
     }
 }
 
-// Fetch student details including profile image
-$query = "SELECT student_id, name, reg_number, school, department, program, year_of_study, email, profile_image FROM students WHERE id = ?";
+// Fetch student details along with hostel and room number
+$query = "SELECT s.student_id, s.name, s.reg_number, s.school, s.department, 
+                    s.program, s.year_of_study, s.email, s.profile_image, 
+                    b.hostel, b.room_number 
+            FROM students s    LEFT JOIN bookings b ON s.student_id = b.student_id
+            WHERE s.id = ?";
+
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $student_id);
 $stmt->execute();
-$stmt->bind_result($student_id, $name, $reg_number, $school, $department, $program, $year_of_study, $email, $profile_image);
+$stmt->bind_result($student_id, $name, $reg_number, $school, $department, 
+                    $program, $year_of_study, $email, $profile_image, 
+                    $hostel, $room_number);
 $stmt->fetch();
 $stmt->close();
 
@@ -54,6 +60,10 @@ $stmt->close();
 if (empty($profile_image)) {
     $profile_image = "imgs/default-avatar.png";
 }
+
+// If hostel details are null, set default values
+$hostel = $hostel ?: "Not Booked";
+$room_number = $room_number ?: "Not Assigned";
 ?>
 
 <!DOCTYPE html>
@@ -67,7 +77,6 @@ if (empty($profile_image)) {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
     <style>
-        /* Glassmorphism Background */
         body {
             background: linear-gradient(135deg, #1f4037, #99f2c8);
             font-family: 'Poppins', sans-serif;
@@ -83,11 +92,6 @@ if (empty($profile_image)) {
             border-radius: 15px;
             backdrop-filter: blur(15px);
             box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.2);
-            transition: 0.3s ease-in-out;
-            position: relative;
-        }
-        .profile-container:hover {
-            box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.3);
         }
 
         .profile-header img {
@@ -97,10 +101,6 @@ if (empty($profile_image)) {
             border: 3px solid #ffb400;
             object-fit: cover;
             cursor: pointer;
-            transition: 0.3s;
-        }
-        .profile-header img:hover {
-            transform: scale(1.1);
         }
 
         .profile-header h2 {
@@ -132,14 +132,8 @@ if (empty($profile_image)) {
             font-weight: bold;
             border-radius: 10px;
             text-decoration: none;
-            transition: 0.3s ease-in-out;
-        }
-        .logout-btn:hover {
-            background: #e6a100;
-            transform: scale(1.05);
         }
 
-        /* Hidden file input styling */
         #profilePictureInput {
             display: none;
         }
@@ -150,18 +144,10 @@ if (empty($profile_image)) {
             background: #ffb400;
             color: #141e30;
             font-size: 14px;
-            font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
-            transition: 0.3s;
-            display: inline-block;
         }
-        .choose-file-btn:hover {
-            background: #e6a100;
-            transform: scale(1.05);
-        }
-        
-        /* Back arrow button */
+
         .back-btn {
             position: absolute;
             top: 20px;
@@ -175,14 +161,8 @@ if (empty($profile_image)) {
             justify-content: center;
             color: white;
             font-size: 20px;
-            text-decoration: none;
-            transition: 0.3s;
             border: none;
             cursor: pointer;
-        }
-        .back-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateX(-3px);
         }
     </style>
 </head>
@@ -190,13 +170,11 @@ if (empty($profile_image)) {
 
 <div class="container">
     <div class="profile-container">
-        <!-- Back arrow button -->
         <button class="back-btn" onclick="window.history.back()">
             <i class="fas fa-arrow-left"></i>
         </button>
         
         <div class="profile-header">
-            <!-- Profile Image -->
             <form method="post" enctype="multipart/form-data">
                 <label for="profilePictureInput">
                     <img id="profileImage" src="<?php echo htmlspecialchars($profile_image); ?>" alt="Profile Picture">
@@ -209,30 +187,14 @@ if (empty($profile_image)) {
         </div>
 
         <div class="profile-details">
-            <div class="info-item">
-                <span><i class="fas fa-id-badge"></i> Student ID:</span>
-                <span><?php echo htmlspecialchars($student_id); ?></span>
-            </div>
-            <div class="info-item">
-                <span><i class="fas fa-book"></i> Registration Number:</span>
-                <span><?php echo htmlspecialchars($reg_number); ?></span>
-            </div>
-            <div class="info-item">
-                <span><i class="fas fa-building"></i> Department:</span>
-                <span><?php echo htmlspecialchars($department); ?></span>
-            </div>
-            <div class="info-item">
-                <span><i class="fas fa-chalkboard-teacher"></i> Program:</span>
-                <span><?php echo htmlspecialchars($program); ?></span>
-            </div>
-            <div class="info-item">
-                <span><i class="fas fa-calendar"></i> Year of Study:</span>
-                <span><?php echo htmlspecialchars($year_of_study); ?></span>
-            </div>
-            <div class="info-item">
-                <span><i class="fas fa-envelope"></i> Email:</span>
-                <span><?php echo htmlspecialchars($email); ?></span>
-            </div>
+            <div class="info-item"><span><i class="fas fa-id-badge"></i> Student ID:</span><span><?php echo htmlspecialchars($student_id); ?></span></div>
+            <div class="info-item"><span><i class="fas fa-book"></i> Reg Number:</span><span><?php echo htmlspecialchars($reg_number); ?></span></div>
+            <div class="info-item"><span><i class="fas fa-building"></i> Department:</span><span><?php echo htmlspecialchars($department); ?></span></div>
+            <div class="info-item"><span><i class="fas fa-chalkboard-teacher"></i> Program:</span><span><?php echo htmlspecialchars($program); ?></span></div>
+            <div class="info-item"><span><i class="fas fa-calendar"></i> Year:</span><span><?php echo htmlspecialchars($year_of_study); ?></span></div>
+            <div class="info-item"><span><i class="fas fa-envelope"></i> Email:</span><span><?php echo htmlspecialchars($email); ?></span></div>
+            <div class="info-item"><span><i class="fas fa-hotel"></i> Hostel:</span><span><?php echo htmlspecialchars($hostel); ?></span></div>
+            <div class="info-item"><span><i class="fas fa-bed"></i> Room Number:</span><span><?php echo htmlspecialchars($room_number); ?></span></div>
         </div>
 
         <a href="?logout=true" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>

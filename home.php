@@ -165,21 +165,21 @@ $conn->close();
             </div>
             </div>
             <div class="carousel-item">
-            <img src= 'imgs/rift.jpg'  alt="Image 1" class="d-block w-100" alt="...">
+            <img src= 'images/victoria/vic.jpg'  alt="Image 1" class="d-block w-100" alt="...">
             <div class="carousel-caption d-none d-md-block">
                 <h5> hostel Booking </h5>
                 <p>Welcome ..Book your desired Hostel and rooom.</p>
             </div>
             </div>
             <div class="carousel-item">
-            <img src='imgs/skc.jpg' alt="Image 1" class="d-block w-100" alt="...">
+            <img src='imgs/bar2.jpg' alt="Image 1" class="d-block w-100" alt="...">
             <div class="carousel-caption d-none d-md-block">
                 <h5>Hostel Booking</h5>
                 <p>Welcome ..Book your desired Hostel and rooom..</p>
             </div>
         </div>
         <div class="carousel-item">
-            <img src='imgs/cole.jpg'  alt="Image 1" class="d-block w-100" alt="...">
+            <img src='imgs/tur.jpg'  alt="Image 1" class="d-block w-100" alt="...">
             <div class="carousel-caption d-none d-md-block">
             <h5>HostelBooking</h5>
             <p>Welcome ..Book your desired Hostel and rooom.</p>
@@ -237,7 +237,7 @@ $conn->close();
 
             <!-- Feature 1: Water Supply -->
             <div class="feature-card">
-                <img src="book/water1.jpg" alt="Water Supply">
+                <img src="book/water2.jpg" alt="Water Supply">
                 <h3>Clean WateSupply</h3>
                 <p>24/7 clean and safe drinking water available for all students.</p>
             </div>
