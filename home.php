@@ -158,7 +158,7 @@ $conn->close();
         </div>
         <div class="carousel-inner">
             <div class="carousel-item active">
-            <img src= 'imgs/a4.jpg' alt="Image 1" class="d-block w-100" alt="...">
+            <img src= 'images/turkwel/tur2.jpg' alt="Image 1" class="d-block w-100" alt="...">
             <div class="carousel-caption d-none d-md-block">
                 <h5>Hostel Booking</h5>
                 <p>Welcome ..Book your desired Hostel and rooom..</p>
@@ -179,7 +179,7 @@ $conn->close();
             </div>
         </div>
         <div class="carousel-item">
-            <img src='imgs/tur.jpg'  alt="Image 1" class="d-block w-100" alt="...">
+            <img src='imgs/a4.jpg'  alt="Image 1" class="d-block w-100" alt="...">
             <div class="carousel-caption d-none d-md-block">
             <h5>HostelBooking</h5>
             <p>Welcome ..Book your desired Hostel and rooom.</p>
@@ -251,7 +251,7 @@ $conn->close();
 
             <!-- Feature 3: Bathrooms -->
             <div class="feature-card">
-                <img src="book/bath.jpg" alt="Bathrooms">
+                <img src="book/bath1.jpg" alt="Bathrooms">
                 <h3>Modern Bathrooms</h3>
                 <p>Hygienic and well-maintained restrooms for comfortable living.</p>
             </div>
@@ -299,7 +299,7 @@ $conn->close();
     <!-- Hostel 1 -->
         <div class="hostel-card">
         <a href="hostel9-details.html">
-            <img src="images/turkana/tur.jpg" alt="Seaside Hostel">
+            <img src="images/turkana/tur1.jpg" alt="Seaside Hostel">
         </a>
         <div class="hostel-info">
             <h3>Turkana Hostel</h3>
@@ -313,7 +313,7 @@ $conn->close();
     <!-- Hostel 2 -->
     <div class="hostel-card">
         <a href="hostel2-details.html">
-            <img src="images/athi/ele.jpg" alt="elementaita">
+            <img src="images/elementaita/ele1.jpg" alt="elementaita">
         </a>
         <div class="hostel-info">
             <h3>Elementaita Hostel</h3>
@@ -339,7 +339,7 @@ $conn->close();
     <!-- Hostel 4 -->
     <div class="hostel-card">
         <a href="hostel4-details.html">
-            <img src="images/turkwel/tur.jpg" alt="City Hostel">
+            <img src="images/turkwel/tur2.jpg" alt="City Hostel">
         </a>
         <div class="hostel-info">
             <h3>Turkwel Hostel</h3>
@@ -352,7 +352,7 @@ $conn->close();
     <!-- Hostel 5 -->
     <div class="hostel-card">
         <a href="hostel5-details.html">
-            <img src="images/athi/ele1.jpg" alt="ele1">
+            <img src="images/athi/athi3.jpg" alt="ele1">
         </a>
         <div class="hostel-info">
             <h3>Athi Hostel</h3>
@@ -365,7 +365,7 @@ $conn->close();
     <!-- Hostel 6 -->
     <div class="hostel-card">
         <a href="hostel6-details.html">
-            <img src="images/baringo/bar1.jpg" alt="Lakeview Stay">
+            <img src="images/baringo/bar4.jpg" alt="Lakeview Stay">
         </a>
         <div class="hostel-info">
             <h3>Baringo Hostel</h3>

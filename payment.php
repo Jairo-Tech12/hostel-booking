@@ -5,99 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>M-Pesa Payment</title>
     
-    
-
-    <script>
-        function sendPayment() {
-            let phone = document.getElementById("phone").value.trim();
-            let amount = document.getElementById("amount").value.trim();
-            const hostel = document.getElementById('hostel').value;
-            window.location.href = 'hostel.php?hostel=' + encodeURIComponent(hostel);
-
-            // Ensure phone number is in 2547XXXXXXXX format
-            if (!phone.startsWith("254")) {
-                phone = "254" + phone.slice(-9);
-            }
-
-            if (phone.length !== 12) {
-                alert("Invalid phone number! Please enter a valid Safaricom number in the format 2547XXXXXXXX");
-                return;
-            }
-
-            if (amount === "" || parseInt(amount) < 1) {
-                alert("Please enter a valid amount!");
-                return;
-            }
-
-            let formData = new FormData();
-            formData.append("phone", phone);
-            formData.append("amount", amount);
-
-            console.log("Sending request to mpesa.php with:", phone, amount);
-
-            fetch("mpesa.php", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.text()) // First, get response as text
-            .then(text => {
-                console.log("Raw response:", text);
-                try {
-                    let data = JSON.parse(text); // Try parsing it as JSON
-                    if (data.error) {
-                        alert("Payment Failed: " + data.error);
-                    } else {
-                        alert("STK Push Sent! Check your phone to complete the payment.");
-                    }
-                } catch (e) {
-                    console.error("Error parsing JSON:", e);
-                    alert("Invalid response from server. Check console for details.");
-                }
-            })
-            .catch(error => {
-                console.error("Fetch API Error:", error);
-                alert("Failed to send request. Check console for details.");
-            });
-        }
-
-        function goBack() {
-            window.history.back(); // Goes to the previous page
-        }
-        function validateAndRedirect(event) {
-        const phone = document.getElementById('phone').value;
-        const amount = document.getElementById('amount').value;
-        
-        // Check if phone number and amount are entered
-        if (!phone || !amount) {
-            alert('Please enter both phone number and amount.');
-            return;
-        }
-        
-        // Redirect to hostel.php if validation is successful
-        window.location.href = 'hostel.php';
-    }
-    </script>
 </head>
-
 <body>
     <!-- Back Button Moved to Upper Page -->
     <button class="back-button" onclick="goBack()">&#8592; Back</button>
 
     <div class="payment-container">
-    <h2>M-Pesa Payment</h2>
-    <form onsubmit="event.preventDefault(); sendPayment();">
-        <label>Phone Number (2547xxxxxxxx):</label>
-        <input type="text" id="phone" placeholder="Enter phone number" required>
+        <h2>M-Pesa Payment</h2>
+        <form onsubmit="event.preventDefault(); sendPayment();">
+            <label>Phone Number (2547xxxxxxxx):</label>
+            <input type="text" id="phone" placeholder="Enter phone number" required>
+            
+            <label>Amount (KES):</label>
+            <input type="number" id="amount" placeholder="Enter amount" required>
+            
+            <button type="submit">Pay Now</button>
+        </form>
+    </div>
 
-        <label>Amount (KES):</label>
-        <input type="number" id="amount" placeholder="Enter amount" required>
+    <script>
+    function getQueryParams() {
+        const params = new URLSearchParams(window.location.search);
+        return {
+            id: params.get('id'),
+            name: params.get('name'),
+            price: params.get('price')
+        };
+    }
 
-        <button type="submit" onclick="validateAndRedirect(event)">Pay Now</button>
-    </form>
-</div>
+    function sendPayment() {
+        let phone = document.getElementById("phone").value.trim();
+        let amount = document.getElementById("amount").value.trim();
+
+        // Ensure phone number is in 2547XXXXXXXX format
+        if (!phone.startsWith("254")) {
+            phone = "254" + phone.slice(-9);
+        }
+
+        if (phone.length !== 12) {
+            alert("Invalid phone number! Please enter a valid Safaricom number in the format 2547XXXXXXXX");
+            return;
+        }
+
+        if (amount === "" || parseInt(amount) < 1) {
+            alert("Please enter a valid amount!");
+            return;
+        }
+
+        const { id, name, price } = getQueryParams();
+
+        let formData = new FormData();
+        formData.append("phone", phone);
+        formData.append("amount", amount);
+
+        console.log("Sending request to mpesa.php with:", phone, amount);
+
+        fetch("mpesa.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.text())
+        .then(text => {
+            console.log("Raw response:", text);
+            try {
+                let data = JSON.parse(text);
+                if (data.error) {
+                    alert("Payment Failed: " + data.error);
+                } else {
+                    // Show success message and then redirect
+                    if (confirm("STK Push Sent Successfully! Check your phone to complete the payment. Click OK to proceed to confirmation.")) {
+                        window.location.href = `confirm.php?id=${encodeURIComponent(id)}&name=${encodeURIComponent(name)}&price=${encodeURIComponent(price)}&phone=${encodeURIComponent(phone)}&amount=${encodeURIComponent(amount)}`;
+                    }
+                }
+            } catch (e) {
+                console.error("Error parsing JSON:", e);
+                alert("Invalid response from server. Check console for details.");
+            }
+        })
+        .catch(error => {
+            console.error("Fetch API Error:", error);
+            alert("Failed to send request. Check console for details.");
+        });
+    }
+
+    function goBack() {
+        window.history.back();
+    }
+</script>
+
 </body>
 <style>
-        /* General Styling */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;

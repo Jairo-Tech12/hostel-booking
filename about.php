@@ -187,7 +187,7 @@ $conn->close();
             <!-- Image Section -->
             <div class="col-lg-6">
                 <div class="image-container">
-                    <img src="imgs/skc.jpg" alt="University Hostel" class="img-fluid">
+                    <img src="images/turkwel/tur2.jpg" alt="University Hostel" class="img-fluid">
                 </div>
             </div>
         </div>
@@ -844,7 +844,7 @@ nav {
 
         /* Hero Section (Image under Navbar) */
         .hero {
-    background: url('contact/c7.jpg') no-repeat center center/cover;
+    background: url('images/turkwel/tur3.jpg') no-repeat center center/cover;
     width: 99%;
     height: 400px;
     display: flex;

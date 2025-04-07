@@ -3,9 +3,9 @@ session_start();
 
 // Database Connection
 $host = "localhost";
-$user = "root"; // Change if necessary
-$pass = ""; // Change if necessary
-$db_name = "seku"; // Your database name
+$user = "root";
+$pass = "";
+$db_name = "seku";
 
 $conn = new mysqli($host, $user, $pass, $db_name);
 
@@ -14,29 +14,29 @@ if ($conn->connect_error) {
     die("Database connection failed: " . $conn->connect_error);
 }
 
-$error = ""; // Initialize error message
+$error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
 
-    // Prepare SQL statement to check if the email exists in the students table
-    $stmt = $conn->prepare("SELECT id, email, password FROM students WHERE email = ?");
+    // ✅ Include reg_number in the query
+    $stmt = $conn->prepare("SELECT id, email, password, reg_number FROM students WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $stmt->store_result();
 
     if ($stmt->num_rows > 0) {
-        // User found, verify password
-        $stmt->bind_result($id, $email, $hashed_password);
+        $stmt->bind_result($id, $email, $hashed_password, $reg_number);
         $stmt->fetch();
 
         if (password_verify($password, $hashed_password)) {
-            // Password is correct, allow login
+            // ✅ Set all necessary session variables
             $_SESSION['student_id'] = $id;
             $_SESSION['email'] = $email;
+            $_SESSION['reg_number'] = $reg_number;
 
-            header("Location: home.php"); // Redirect to home page
+            header("Location: home.php");
             exit();
         } else {
             $error = "Incorrect password. Please try again.";
@@ -47,9 +47,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 }
 
-// Close the database connection
 $conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
