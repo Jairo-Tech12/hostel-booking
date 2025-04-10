@@ -172,7 +172,13 @@ $result = $conn->query($sql);
             <a class="nav-link" href="message.php">
                 <i class="bi bi-chat-dots"></i> Messages
             </a>
-        </li>   
+        </li> 
+        <li class="nav-item">
+    <a class="nav-link" href="issue-item.php"> 
+        <i class="bi bi-check-circle"></i> Issued Items  
+    </a>
+</li>
+
     </ul>
 
         

@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 $host = 'localhost';
 $dbUsername = 'root';
 $dbPassword = '';
@@ -11,25 +13,73 @@ $conn = new mysqli($host, $dbUsername, $dbPassword, $dbName);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-session_start();
+
+// Check if user is logged in
 if (!isset($_SESSION['student_id'])) {
-    // Redirect to login page if student is not logged in
-    header("Location: login.php");
-    exit;
+    echo "Session student_id is not set."; // Debugging message
+    exit();
 }
 
-// Fetch the student details from the session (or database if needed)
 $student_id = $_SESSION['student_id'];
-// Fetch student details from the database (example query, adjust as per your structure)
-$studentQuery = "SELECT * FROM students WHERE id = $student_id";
-$studentResult = $conn->query($studentQuery);
-$studentData = $studentResult->fetch_assoc();
 
-// Fetch hostel details from the URL parameters
-$hostel_id = isset($_GET['id']) ? $_GET['id'] : null;
-$hostel_name = isset($_GET['name']) ? $_GET['name'] : null;
-$hostel_price = isset($_GET['price']) ? $_GET['price'] : null;
+// Handle profile picture upload
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profile_picture'])) {
+    $target_dir = "uploads/";
+    $image_name = time() . "_" . basename($_FILES["profile_picture"]["name"]);
+    $target_file = $target_dir . $image_name;
+    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+    $allowed_types = ["jpg", "jpeg", "png", "gif"];
 
+    if (in_array($imageFileType, $allowed_types)) {
+        if (move_uploaded_file($_FILES["profile_picture"]["tmp_name"], $target_file)) {
+            $query = "UPDATE students SET profile_image = ? WHERE student_id = ?";
+            $stmt = $conn->prepare($query);
+            if ($stmt === false) {
+                die("Error preparing statement: " . $conn->error); // Debugging message
+            }
+            $stmt->bind_param("si", $target_file, $student_id);
+            $stmt->execute();
+            $stmt->close();
+        } else {
+            echo "Sorry, there was an error uploading your file."; // Error handling for file upload
+        }
+    } else {
+        echo "Only JPG, JPEG, PNG & GIF files are allowed."; // Error handling for invalid file type
+    }
+}
+
+// Fetch student details along with hostel, room number, and issued items
+$query = "SELECT s.student_id, s.name, s.reg_number, s.school, s.department, 
+                  s.program, s.year_of_study, s.email, s.profile_image, 
+                  b.hostel_name, b.room_number,
+                  i.key_issued, i.bucket_issued, i.curtain_issued, i.mattress_issued
+          FROM students s
+          LEFT JOIN bookings b ON s.student_id = b.student_id
+          LEFT JOIN issued_items i ON s.student_id = i.student_id
+          WHERE s.student_id = ?";
+
+$stmt = $conn->prepare($query);
+if ($stmt === false) {
+    die("Error preparing statement: " . $conn->error); // Debugging message
+}
+
+$stmt->bind_param("i", $student_id);
+$stmt->execute();
+$stmt->bind_result($student_id, $name, $reg_number, $school, $department, 
+                   $program, $year_of_study, $email, $profile_image, 
+                   $hostel_name, $room_number, 
+                   $key_issued, $bucket_issued, $curtain_issued, $mattress_issued);
+$stmt->fetch();
+$stmt->close();
+
+// If no profile image, use a default one
+if (empty($profile_image)) {
+    $profile_image = "imgs/default-avatar.png";
+}
+
+// If hostel details are null, set default values
+$hostel_name = $hostel_name ?: "Not Booked";
+$room_number = $room_number ?: "Not Assigned";
 ?>
 
 <!DOCTYPE html>
@@ -37,204 +87,139 @@ $hostel_price = isset($_GET['price']) ? $_GET['price'] : null;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M-Pesa Payment</title>
-    <script>
-    function sendPayment() {
-        let phone = document.getElementById("phone").value.trim();
-        let amount = document.getElementById("amount").value.trim();
+    <title>Profile | Student Portal</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-        // Ensure phone number is in the correct format
-        if (!phone.startsWith("254")) {
-            phone = "254" + phone.slice(-9);
-        }
-
-        if (phone.length !== 12 || !phone.match(/^2547\d{8}$/)) {
-            alert("Invalid phone number! Please enter a valid Safaricom number in the format 2547XXXXXXXX");
-            return;
-        }
-
-        if (amount === "" || parseInt(amount) < 1) {
-            alert("Please enter a valid amount!");
-            return;
-        }
-
-        let formData = new FormData();
-        formData.append("phone", phone);
-        formData.append("amount", amount);
-        formData.append("student_id", "<?php echo $student_id; ?>");
-        formData.append("full_name", "<?php echo $studentData['full_name']; ?>");
-        formData.append("email", "<?php echo $studentData['email']; ?>");
-        formData.append("hostel_id", "<?php echo $hostel_id; ?>");
-        formData.append("hostel_name", "<?php echo $hostel_name; ?>");
-        formData.append("hostel_price", "<?php echo $hostel_price; ?>");
-
-        console.log("Sending STK Push request to mpesa.php with:", phone, amount);
-
-        fetch("mpesa.php", {
-            method: "POST",
-            body: formData
-        })
-        .then(response => response.json()) // Get response as JSON
-        .then(data => {
-            console.log("STK Push Response:", data);
-
-            if (data.ResponseCode === "0") {
-                alert("STK Push Sent! Check your phone to complete the payment.");
-                saveBooking(phone, amount);
-            } else {
-                alert("Payment Failed: " + (data.errorMessage || "Unknown Error"));
-                saveBooking(phone, amount); // Save the booking even if payment fails
-            }
-        })
-        .catch(error => {
-            console.error("Fetch API Error:", error);
-            alert("Failed to send request. Check console for details.");
-            saveBooking(phone, amount); // Save booking even on error
-        });
-    }
-
-    function saveBooking(phone, amount) {
-        let bookingData = new FormData();
-        bookingData.append("phone", phone);
-        bookingData.append("amount", amount);
-        bookingData.append("hostel_id", "<?php echo $hostel_id; ?>");
-        bookingData.append("hostel_name", "<?php echo $hostel_name; ?>");
-        bookingData.append("hostel_price", "<?php echo $hostel_price; ?>");
-        bookingData.append("student_id", "<?php echo $student_id; ?>");
-        bookingData.append("full_name", "<?php echo $studentData['full_name']; ?>");
-        bookingData.append("email", "<?php echo $studentData['email']; ?>");
-
-        console.log("Saving booking with:", phone, amount);
-
-        fetch("saveBooking.php", {
-            method: "POST",
-            body: bookingData
-        })
-        .then(response => response.text())
-        .then(text => {
-            console.log("Booking Response:", text);
-            if (text === "success") {
-                alert("Booking Successful!");
-            } else {
-                alert("Error saving booking: " + text);
-            }
-        })
-        .catch(error => {
-            console.error("Booking Error:", error);
-            alert("Error while saving booking. Check console for details.");
-        });
-    }
-
-    function goBack() {
-        window.history.back(); // Goes to the previous page
-    }
-</script>
-
-
-
-</head>
-<body>
-    <button class="back-button" onclick="goBack()">&#8592; Back</button>
-
-    <div class="payment-container">
-        <h2>M-Pesa Payment</h2>
-        <form onsubmit="event.preventDefault(); sendPayment();">
-            <label>Phone Number (2547xxxxxxxx):</label>
-            <input type="text" id="phone" placeholder="Enter phone number" required>
-            
-            <label>Amount (KES):</label>
-            <input type="number" id="amount" placeholder="Enter amount" required>
-            <p>Hostel: <?php echo htmlspecialchars($hostel_name); ?></p>
-            
-            <button type="submit">Pay Now</button>
-        </form>
-        
-    </div>
-</body>
-<style>
-     body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            padding-top: 20px;
-        }
-
-        /* Back Button (Now at the top of the page) */
-        .back-button {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: #00796b; /* Updated background color */
-    border: none;
-    width: inherit;
-    cursor: pointer;
-    font-size: 22px;
-    cursor: pointer;
-    color: white; /* Change text color to white for contrast */
-    padding: 10px 15px; /* Add padding for a better hit area */
-    border-radius: 5px; /* Rounded corners */
-    transition: background 0.3s, transform 0.3s; /* Added transition for hover effect */
-}
-
-.back-button:hover {
-    background:rgb(1, 38, 245); /* Darker green on hover */
-    transform: translateY(-2px); /* Slight lift effect */
-}
-
-        /* Payment Form Container */
-        .payment-container {
-            background: white;
-            padding: 20px;
-            width: 350px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    <style>
+        body {
+            background: linear-gradient(135deg, #1f4037, #99f2c8);
+            font-family: 'Poppins', sans-serif;
+            color: white;
             text-align: center;
         }
 
-        /* Form Heading */
-        .payment-container h2 {
-            margin-bottom: 15px;
-            color: #009688;
+        .profile-container {
+            max-width: 500px;
+            margin: 60px auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.2);
         }
 
-        /* Input Fields */
-        input {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+        .profile-header img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid #ffb400;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .profile-header h2 {
+            margin-top: 15px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .profile-details {
+            text-align: left;
+            margin-top: 20px;
+        }
+        .profile-details .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             font-size: 16px;
         }
 
-        /* Payment Button */
-        button {
+        .logout-btn {
+            display: inline-block;
             width: 100%;
+            margin-top: 25px;
             padding: 12px;
-            border: none;
-            border-radius: 5px;
-            background: #009688;
-            color: white;
-            font-size: 18px;
+            background: #ffb400;
+            color: #141e30;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 10px;
+            text-decoration: none;
+        }
+
+        #profilePictureInput {
+            display: none;
+        }
+
+        .choose-file-btn {
+            margin-top: 15px;
+            padding: 10px 15px;
+            background: #ffb400;
+            color: #141e30;
+            font-size: 14px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: 0.3s;
         }
 
-        /* Hover Effect */
-        button:hover {
-            background: #00796b;
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            border: none;
+            cursor: pointer;
         }
+    </style>
+</head>
+<body>
 
-        /* Responsive Design */
-        @media (max-width: 400px) {
-            .payment-container {
-                width: 90%;
-            }
-        }
-</style>
+<div class="container">
+    <div class="profile-container">
+        <button class="back-btn" onclick="window.history.back()">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        
+        <div class="profile-header">
+            <form method="post" enctype="multipart/form-data">
+                <label for="profilePictureInput">
+                    <img id="profileImage" src="<?php echo htmlspecialchars($profile_image); ?>" alt="Profile Picture">
+                </label>
+                <input type="file" name="profile_picture" id="profilePictureInput" accept="image/*" onchange="this.form.submit();">
+            </form>
 
+            <h2><?php echo htmlspecialchars($name); ?></h2>
+            <p><i class="fas fa-graduation-cap"></i> <?php echo htmlspecialchars($school); ?></p>
+        </div>
+
+        <div class="profile-details">
+            <div class="info-item"><span><i class="fas fa-id-badge"></i> Student ID:</span><span><?php echo htmlspecialchars($student_id); ?></span></div>
+            <div class="info-item"><span><i class="fas fa-book"></i> Reg Number:</span><span><?php echo htmlspecialchars($reg_number); ?></span></div>
+            <div class="info-item"><span><i class="fas fa-building"></i> Department:</span><span><?php echo htmlspecialchars($department); ?></span></div>
+            <div class="info-item"><span><i class="fas fa-chalkboard-teacher"></i> Program:</span><span><?php echo htmlspecialchars($program); ?></span></div>
+            <div class="info-item"><span><i class="fas fa-calendar"></i> Year:</span><span><?php echo htmlspecialchars($year_of_study); ?></span></div>
+            <div class="info-item"><span><i class="fas fa-envelope"></i> Email:</span><span><?php echo htmlspecialchars($email); ?></span></div>
+            <div class="info-item"><span><i class="fas fa-hotel"></i> Hostel:</span><span><?php echo htmlspecialchars($hostel_name); ?></span></div>
+            <div class="info-item"><span><i class="fas fa-bed"></i> Room Number:</span><span><?php echo htmlspecialchars($room_number); ?></span></div>
+            <div class="info-item"><span><i class="fas fa-key"></i> Key Issued:</span><span><?php echo $key_issued ? "Yes" : "No"; ?></span></div>
+            <div class="info-item"><span><i class="fas fa-bucket"></i> Bucket Issued:</span><span><?php echo $bucket_issued ? "Yes" : "No"; ?></span></div>
+            <div class="info-item"><span><i class="fas fa-curtains"></i> Curtain Issued:</span><span><?php echo $curtain_issued ? "Yes" : "No"; ?></span></div>
+            <div class="info-item"><span><i class="fas fa-bed"></i> Mattress Issued:</span><span><?php echo $mattress_issued ? "Yes" : "No"; ?></span></div>
+        </div>
+
+        <a href="?logout=true" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+</div>
+
+</body>
 </html>

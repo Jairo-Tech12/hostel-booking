@@ -1,11 +1,17 @@
 <?php
-session_start(); // Start session at the very top
+// Start session
+session_start();
 
-// Database credentials
+// Database configuration
 $host = 'localhost';
 $dbUsername = 'root';
 $dbPassword = '';
 $dbName = 'seku';
+
+// Initialize variables
+$result_html = "";
+$name = "";
+$profile_image = "imgs/default-avatar.png";
 
 // Connect to the database
 $conn = new mysqli($host, $dbUsername, $dbPassword, $dbName);
@@ -13,48 +19,6 @@ $conn = new mysqli($host, $dbUsername, $dbPassword, $dbName);
 // Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
-}
-
-// Initialize result variable for hostel search
-$result_html = "";
-
-// Check if search is submitted
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['search'])) {
-    $hostel_name = trim($_POST['hostel_name']);
-
-    if (!empty($hostel_name)) {
-        // Use prepared statements to prevent SQL injection
-        $sql = "SELECT * FROM hostels WHERE name LIKE ?";
-        $stmt = $conn->prepare($sql);
-        $search_term = "%" . $hostel_name . "%";
-        $stmt->bind_param("s", $search_term);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result->num_rows > 0) {
-            // Display hostel details
-            $result_html .= "<h3>Available Hostels</h3>";
-            $result_html .= "<div class='hostel-container'>";
-
-            while ($row = $result->fetch_assoc()) {
-                $result_html .= "<div class='hostel-card'>";
-                $result_html .= "<h4>" . htmlspecialchars($row['name']) . "</h4>";
-                $result_html .= "<p><strong>Price:</strong> $" . htmlspecialchars($row['price']) . "</p>";
-                $result_html .= "<p><strong>Type:</strong> " . htmlspecialchars($row['type']) . "</p>";
-                $result_html .= "<p><strong>Total Rooms:</strong> " . htmlspecialchars($row['total_rooms']) . "</p>";
-                $result_html .= "<p><strong>Availability:</strong> <span class='" . strtolower(htmlspecialchars($row['availability'])) . "'>" . htmlspecialchars($row['availability']) . "</span></p>";
-                $result_html .= "<a href='hostel.php?id=" . htmlspecialchars($row['id']) . "' class='view-details'>View Details</a>";
-                $result_html .= "</div>";
-            }
-
-            $result_html .= "</div>"; // Close hostel container
-        } else {
-            $result_html .= "<p class='not-found'>No hostels found matching your search.</p>";
-        }
-        $stmt->close();
-    } else {
-        $result_html .= "<p class='error'>Please enter a hostel name.</p>";
-    }
 }
 
 // Check user session for student login
@@ -88,6 +52,48 @@ if (isset($_GET['logout']) && $_GET['logout'] == 'true') {
     exit();
 }
 
+// Initialize result variable for search results
+$result_html = "";
+
+// Handle hostel search
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['search'])) {
+    $hostel_name = trim($_POST['hostel_name']);
+
+    if (!empty($hostel_name)) {
+        // Secure the query with prepared statements
+        $sql = "SELECT * FROM hostels WHERE name LIKE ?";
+        $stmt = $conn->prepare($sql);
+        $search_term = "%" . $hostel_name . "%";
+        $stmt->bind_param("s", $search_term);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            // Display hostel details
+            $result_html .= "<h3>Available Hostels</h3>";
+            $result_html .= "<div class='hostel-container'>";
+
+            while ($row = $result->fetch_assoc()) {
+                $result_html .= "<div class='hostel-card'>";
+                $result_html .= "<h4>" . htmlspecialchars($row['name']) . "</h4>";
+                $result_html .= "<p><strong>Price:</strong> $" . htmlspecialchars($row['price']) . "</p>";
+                $result_html .= "<p><strong>Type:</strong> " . htmlspecialchars($row['type']) . "</p>";
+                $result_html .= "<p><strong>Availability:</strong> <span class='" . strtolower(htmlspecialchars($row['availability'])) . "'>" . htmlspecialchars($row['availability']) . "</span></p>";
+                // Link to detailed hostel page
+                $result_html .= "<a href='hostel.php?id=" . $row['id'] . "' class='view-details'>View Details</a>";
+                $result_html .= "</div>";
+            }
+
+            $result_html .= "</div>"; // Close hostel container
+        } else {
+            $result_html .= "<p class='not-found'>No hostels found matching your search.</p>";
+        }
+        $stmt->close();
+    } else {
+        $result_html .= "<p class='error'>Please enter a hostel name.</p>";
+    }
+}
+
 // Handle Comment Submission
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['name'], $_POST['reg_no'], $_POST['message'])) {
     $name = htmlspecialchars(trim($_POST['name']));
@@ -110,33 +116,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['name'], $_POST['reg_no
     }
 }
 
-// Close the database connection (only once)
-$conn->close();
-?>
-
-<?php
-// Database connection
-$servername = "localhost";
-$username = "root"; // Replace with your MySQL username
-$password = ""; // Replace with your MySQL password
-$dbname = "seku"; // Replace with your database name
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Process form submission
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+// Handle Incident Report Submission
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['incident-title'])) {
     $title = $_POST['incident-title'];
     $description = $_POST['incident-description'];
     $category = $_POST['incident-category'];
     $priority = $_POST['incident-priority'];
+    $attachment = "";
 
     // Handle file upload (if any)
-    $attachment = "";
     if (isset($_FILES['incident-attachments']) && $_FILES['incident-attachments']['error'] == 0) {
         $file_name = $_FILES['incident-attachments']['name'];
         $file_tmp = $_FILES['incident-attachments']['tmp_name'];
@@ -149,28 +137,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Prepare SQL query to insert incident details
     $sql = "INSERT INTO incidents (title, description, category, priority, attachment)
-            VALUES ('$title', '$description', '$category', '$priority', '$attachment')";
+            VALUES (?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sssss", $title, $description, $category, $priority, $attachment);
 
-    // Execute query
-    if ($conn->query($sql) === TRUE) {
+    if ($stmt->execute()) {
         // Redirect to the same page to prevent duplicate submissions
         header("Location: ".$_SERVER['PHP_SELF']);
-        echo "<script>
-        alert('Login successful!');
-        window.location.href = 'contact.php';
-        </script>";
-exit();
-} else {
-$error = "Incorrect password!";
-}
-} else {
-$error = "You have not registered.";
+        exit();
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+    $stmt->close();
 }
 
-
-// Close connection
+// Close database connection
 $conn->close();
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -233,14 +218,14 @@ $conn->close();
             <img src= 'contact/c3.jpg' alt="Image 1" class="d-block w-100" alt="...">
             <div class="carousel-caption d-none d-md-block">
                 <h5>Contact us</h5>
-                <p>Welcome ..Book your desired Hostel and rooom..</p>
+                <p>Welcome ...Reach us,call us and talk to us.</p>
             </div>
             </div>
             <div class="carousel-item">
             <img src= 'contact/c5.jpg'  alt="Image 1" class="d-block w-100" alt="...">
             <div class="carousel-caption d-none d-md-block">
                 <h5> contact us </h5>
-                <p>Welcome ..Book your desired Hostel and rooom.</p>
+                <p>Welcome ...reach us in any social media accounts..</p>
             </div>
             </div>
         </div>
@@ -255,26 +240,30 @@ $conn->close();
 </div>
 <p>
 <div class="search-container">
-    <h3>Find Your Ideal Hostel</h3>
-    <form method="POST" action="">
-        <div class="search-box">
-            <select name="hostel_name" id="hostel-select" required>
-                <option value="" disabled selected>Choose a Hostel</option>
-                <option value="Victoria">Victoria</option>
-                <option value="Elementaita">Elementaita</option>
-                <option value="Turkwel">Turkwel</option>
-                <option value="Magadi">Magadi</option>
-                <option value="Athi">Athi</option>
-                <option value="Yataa">Yatta</option>
-                <option value="Turkana">Turkana</option>
-            </select>
-            <button type="submit" name="search" class="find-btn">Find Hostel</button>
-        </div>
-    </form>
-</div>
+        <h3>Find Your Ideal Hostel</h3>
+        <form method="POST" action="">
+            <div class="search-box">
+                <select name="hostel_name" required>
+                    <option value="" disabled selected>Choose a Hostel</option>
+                    <option value="Victoria">Victoria</option>
+                    <option value="Elementaita">Elementaita</option>
+                    <option value="Turkwel">Turkwel</option>
+                    <option value="Magadi">Magadi</option>
+                    <option value="Athi">Athi</option>
+                    <option value="Yataa">Yatta</option>
+                    <option value="Turkana">Turkana</option>
+                </select>
+                <button type="submit" name="search" class="find-btn">Find Hostel</button>
+                
+            </div>
+        </form>
+    </div>
 
-    </form>
-</div>
+ <div class="result-container" id="resultContainer">
+        <div class="result-image" id="hostelImage"></div>
+        <div class="result-title" id="hostelName"></div>
+        <p class="result-details" id="hostelDetails"></p>
+    </div>
 <?php echo $result_html; ?>
 <p>
 
@@ -752,8 +741,8 @@ h3 {
         }
 
         /* Different Button Styles Based on Keyword */
-    .find-btn {
-    width: 20px;
+        .find-btn {
+    width: 40%;
     padding: 10px;
     background: #28a745;
     color: white;
@@ -806,7 +795,7 @@ h3 {
         .view-btn {
             width: 100%;
             padding: 12px;
-            background:rgb(30, 255, 0); /* Purple for "View Hostel" */
+            background: #6610f2; /* Purple for "View Hostel" */
             color: white;
             border: none;
             border-radius: 8px;
@@ -817,7 +806,7 @@ h3 {
         }
 
         .view-btn:hover {
-            background:rgb(125, 194, 13);
+            background: #520dc2;
         }
 
         /* Responsive Design */
@@ -904,6 +893,7 @@ h3 {
         width: 100%;
     }
 }
+
 .carousel {
     margin-top: 100px;
     width: 100%; /* Adjust width as needed */

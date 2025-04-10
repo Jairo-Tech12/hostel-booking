@@ -34,7 +34,7 @@ $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
             // Display hostel details
-            $result_html .= "<h3>Search Results</h3>";
+            $result_html .= "<h3></h3>";
             $result_html .= "<div class='hostel-container'>";
 
             while ($row = $result->fetch_assoc()) {
@@ -166,6 +166,13 @@ $conn->close();
             </div>
         </form>
     </div>
+
+<div class="result-container" id="resultContainer">
+        <div class="result-image" id="hostelImage"></div>
+        <div class="result-title" id="hostelName"></div>
+        <p class="result-details" id="hostelDetails"></p>
+    </div>
+<?php echo $result_html; ?>
     <!-- About Us Section -->
 <section class="about-us py-5">
     <div class="container">
@@ -240,11 +247,18 @@ $conn->close();
 </section>
 <div class="col-lg-12">
     <div class="map-container">
-        <iframe
-            src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d52364.89486658008!2d37.74883737717487!3d-1.312211432583995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2ske!4v1741199946467!5m2!1sen!2ske"
-            width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d997.0081933378035!2d37.753548699999996!3d-1.3089646!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f3ef04e0d0f5f%3A0xe88f97a7c67d4d36!2sSEKU%20Main%20Campus!5e0!3m2!1sen!2ske!4v1712568123456" 
+            width="100%" 
+            height="400" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
     </div>
 </div>
+
 
 
 

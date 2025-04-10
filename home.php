@@ -258,21 +258,21 @@ $conn->close();
 
             <!-- Feature 4: Rooms & Beds -->
             <div class="feature-card">
-                <img src="book/room.jpg" alt="Rooms and Beds">
+                <img src="book/bed.jpg" alt="Rooms and Beds">
                 <h3> Rooms & Beds</h3>
                 <p>Comfortable and spacious rooms designed for students.</p>
             </div>
 
             <!-- Feature 5: Dining Area -->
             <div class="feature-card">
-                <img src="book/dining.jpg" alt="Dining Area">
+                <img src="book/mess.jpg" alt="Dining Area">
                 <h3>Dining Area</h3>
                 <p>A well-furnished dining hall with a variety of healthy meals.</p>
             </div>
 
             <!-- Feature 6: CCTV Security -->
             <div class="feature-card">
-                <img src="book/cctv.jpg" alt="CCTV Security">
+                <img src="book/cct.jpg" alt="CCTV Security">
                 <h3>24/7 CCTV</h3>
                 <p>Secure hostel environment with round-the-clock monitoring.</p>
             </div>
@@ -286,7 +286,7 @@ $conn->close();
 
             <!-- Feature 8: Study Areas -->
             <div class="feature-card">
-                <img src="book/study.jpg" alt="Study Areas">
+                <img src="book/libu.jpg" alt="Study Areas">
                 <h3>Study Spaces</h3>
                 <p>Quiet and well-equipped areas for studying and group work.</p>
             </div>
@@ -298,7 +298,7 @@ $conn->close();
 <div class="grid-container">
     <!-- Hostel 1 -->
         <div class="hostel-card">
-        <a href="hostel9-details.html">
+        <a href="book.php">
             <img src="images/turkana/tur1.jpg" alt="Seaside Hostel">
         </a>
         <div class="hostel-info">
@@ -312,7 +312,7 @@ $conn->close();
 
     <!-- Hostel 2 -->
     <div class="hostel-card">
-        <a href="hostel2-details.html">
+        <a href="book.php">
             <img src="images/elementaita/ele1.jpg" alt="elementaita">
         </a>
         <div class="hostel-info">
@@ -325,7 +325,7 @@ $conn->close();
 
     <!-- Hostel 3 -->
     <div class="hostel-card">
-        <a href="hostel3-details.html">
+        <a href="book.php">
             <img src="images/victoria/vic.jpg" alt="Ocean View">
         </a>
         <div class="hostel-info">
@@ -338,7 +338,7 @@ $conn->close();
 
     <!-- Hostel 4 -->
     <div class="hostel-card">
-        <a href="hostel4-details.html">
+        <a href="book.php">
             <img src="images/turkwel/tur2.jpg" alt="City Hostel">
         </a>
         <div class="hostel-info">
@@ -351,7 +351,7 @@ $conn->close();
 
     <!-- Hostel 5 -->
     <div class="hostel-card">
-        <a href="hostel5-details.html">
+        <a href="book.php">
             <img src="images/athi/athi3.jpg" alt="ele1">
         </a>
         <div class="hostel-info">
@@ -364,7 +364,7 @@ $conn->close();
 
     <!-- Hostel 6 -->
     <div class="hostel-card">
-        <a href="hostel6-details.html">
+        <a href="book.php">
             <img src="images/baringo/bar4.jpg" alt="Lakeview Stay">
         </a>
         <div class="hostel-info">
@@ -377,7 +377,7 @@ $conn->close();
 
     <!-- Hostel 7 -->
     <div class="hostel-card">
-        <a href="hostel7-details.html">
+        <a href="book.php">
             <img src="images/yatta/yatta.jpg" alt="Mountain Base">
         </a>
         <div class="hostel-info">
@@ -390,7 +390,7 @@ $conn->close();
 
     <!-- Hostel 8 -->
     <div class="hostel-card">
-        <a href="hostel8-details.html">
+        <a href="book.php">
             <img src="images/magadi/maga.jpg" alt="Cozy Stay">
         </a>
         <div class="hostel-info">
@@ -548,6 +548,22 @@ $conn->close();
     function toggleNav() {
         document.querySelector('.nav-links').classList.toggle('show');
     }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const myCarousel = document.querySelector('#carouselExampleCaptions');
+    const carousel = new bootstrap.Carousel(myCarousel, {
+        interval: 5000, // Change slide every 5 seconds
+        pause: 'hover', // Pause on hover
+        wrap: true // Infinite looping
+    });
+    
+    // Add smooth transition between slides
+    myCarousel.addEventListener('slide.bs.carousel', function() {
+        const inner = this.querySelector('.carousel-inner');
+        inner.style.transition = 'transform 1s ease-in-out';
+    });
+});
+
 </script>
 
 <style>
@@ -1181,44 +1197,76 @@ h2 {
                 grid-template-columns: repeat(1, 1fr);
             }
         }
-    /* Center the carousel and set its size */
+ /* Center the carousel and set its size */
 .carousel {
-    width: 100%; /* Adjust width as needed */
-    max-width: 1290px; /* Prevents it from getting too large */
-    margin: auto; /* Centers the carousel */
-    border-radius: 15px; /* Rounds the corners */
-    overflow: hidden; /* Prevents image overflow */
+    width: 100%;
+    max-width: 1290px;
+    margin: auto;
+    border-radius: 15px;
+    overflow: hidden;
 }
 
+/* Carousel inner container */
+.carousel-inner {
+    transition: transform 0.7s ease-in-out; /* Smooth slide transition */
+}
 /* Style carousel images */
-.carousel-inner img {
-    width: 100%; /* Ensures images fill the carousel */
-    height: 400px; /* Adjust height for consistency */
-    object-fit: cover; /* Ensures images cover the area without distortion */
-    border-radius: 15px; /* Smooth rounded corners */
-    filter: brightness(1.1) contrast(1.05); /* Enhances image clarity */
+.carousel-item {
+    position: relative;
+    transition: opacity 1s ease-in-out; /* Fade transition */
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 15px;
+    filter: brightness(1.1) contrast(1.05);
     padding-top: 5px;
+    transition: opacity 0.5s ease; 
+}
+
+/* Add subtle zoom animation to images */
+.carousel-item.active img {
+    transform: scale(1.05);
 }
 
 /* Style the captions */
 .carousel-caption {
-    background: rgba(0, 0, 0, 0.5); 
+    background: rgba(0, 0, 0, 0.5);
     padding: 15px;
     border-radius: 10px;
-    color: #fff; /* Ensures text is visible */
-    font-family: 'Poppins', sans-serif; /* Modern font */
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.5s ease;
+    opacity: 0;
+    transform: translateY(20px);
 }
 
-/* Style caption headings */
-.carousel-caption h5 {
-    font-size: 24px;
-    font-weight: bold;
-    color:rgb(248, 99, 0)
+.carousel-item.active .carousel-caption {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.5s;
+}
+@keyframes slideIn {
+    0% { opacity: 0.8; transform: scale(0.98); }
+    100% { opacity: 1; transform: scale(1); }
 }
 
-/* Style caption text */
-.carousel-caption p {
-    font-size: 12px;
+/* Indicator animations */
+.carousel-indicators button {
+    transition: all 0.3s ease;
+}
+
+.carousel-indicators button.active {
+    transform: scale(1.3);
+    background-color: rgb(248, 99, 0);
+}
+
+/* Control buttons */
+.carousel-control-prev,
+.carousel-control-next {
+    transition: opacity 0.3s ease;
 }
 /* Google Font */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');

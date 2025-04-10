@@ -45,12 +45,22 @@ if (!isset($_SESSION['staff_id'])) {
             <a class="nav-link" href="incidents.php">
                 <i class="bi bi-exclamation-triangle"></i> Incidents
             </a>
-        </li>
+        </li><li class="nav-item">
+                <a class="nav-link active" href="assign-items.php">
+                    <i class="bi bi-key"></i> Assign Items
+                </a>
+            </li>
         <li class="nav-item">
             <a class="nav-link" href="message.php">
                 <i class="bi bi-chat-dots"></i> Messages
             </a>
-        </li>   
+        </li> 
+        <li class="nav-item">
+    <a class="nav-link" href="issue-item.php"> 
+        <i class="bi bi-check-circle"></i> Issued Items  
+    </a>
+</li>
+
     </ul>
 
 

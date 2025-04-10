@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profile_picture'])) 
 // Fetch student details along with hostel and room number
 $query = "SELECT s.student_id, s.name, s.reg_number, s.school, s.department, 
                     s.program, s.year_of_study, s.email, s.profile_image, 
-                    b.hostel, b.room_number 
+                    b.hostel_name, b.room_number 
             FROM students s    LEFT JOIN bookings b ON s.student_id = b.student_id
             WHERE s.id = ?";
 
@@ -52,7 +52,7 @@ $stmt->bind_param("i", $student_id);
 $stmt->execute();
 $stmt->bind_result($student_id, $name, $reg_number, $school, $department, 
                     $program, $year_of_study, $email, $profile_image, 
-                    $hostel, $room_number);
+                    $hostel_name, $room_number);
 $stmt->fetch();
 $stmt->close();
 
@@ -62,7 +62,7 @@ if (empty($profile_image)) {
 }
 
 // If hostel details are null, set default values
-$hostel = $hostel ?: "Not Booked";
+$hostel_name = $hostel_name ?: "Not Booked";
 $room_number = $room_number ?: "Not Assigned";
 ?>
 
@@ -193,7 +193,7 @@ $room_number = $room_number ?: "Not Assigned";
             <div class="info-item"><span><i class="fas fa-chalkboard-teacher"></i> Program:</span><span><?php echo htmlspecialchars($program); ?></span></div>
             <div class="info-item"><span><i class="fas fa-calendar"></i> Year:</span><span><?php echo htmlspecialchars($year_of_study); ?></span></div>
             <div class="info-item"><span><i class="fas fa-envelope"></i> Email:</span><span><?php echo htmlspecialchars($email); ?></span></div>
-            <div class="info-item"><span><i class="fas fa-hotel"></i> Hostel:</span><span><?php echo htmlspecialchars($hostel); ?></span></div>
+            <div class="info-item"><span><i class="fas fa-hotel"></i> Hostel:</span><span><?php echo htmlspecialchars($hostel_name); ?></span></div>
             <div class="info-item"><span><i class="fas fa-bed"></i> Room Number:</span><span><?php echo htmlspecialchars($room_number); ?></span></div>
         </div>
 
