@@ -2,24 +2,14 @@
 // Start session
 session_start();
 
-// Database configuration
-$host = 'localhost';
-$dbUsername = 'root';
-$dbPassword = '';
-$dbName = 'seku';
+include 'config.php';
 
 // Initialize variables
 $result_html = "";
 $name = "";
 $profile_image = "imgs/default-avatar.png";
 
-// Connect to the database
-$conn = new mysqli($host, $dbUsername, $dbPassword, $dbName);
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 // Check user session for student login
 if (isset($_SESSION['student_id'])) {

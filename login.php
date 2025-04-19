@@ -1,19 +1,6 @@
 <?php
 session_start();
-
-// Database Connection
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db_name = "seku";
-
-$conn = new mysqli($host, $user, $pass, $db_name);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
-}
-
+include 'config.php';
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

@@ -1,19 +1,6 @@
 <?php
 session_start(); // Start session at the top
-
-$host = 'localhost';
-$dbUsername = 'root';
-$dbPassword = '';
-$dbName = 'seku';
-
-// Connect to the database
-$conn = new mysqli($host, $dbUsername, $dbPassword, $dbName);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-    exit();
-}
+include 'config.php';
 
 // Initialize result variable
 $result_html = "";

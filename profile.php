@@ -1,17 +1,6 @@
 <?php
 session_start();
-$host = 'localhost';
-$dbUsername = 'root';
-$dbPassword = '';
-$dbName = 'seku';
-
-// Connect to the database
-$conn = new mysqli($host, $dbUsername, $dbPassword, $dbName);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include 'config.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['student_id'])) {
