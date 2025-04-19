@@ -147,7 +147,7 @@ $conn->close();
     <div class="hero">
         Welcome to University Hostels
     </div>
-    <div class="search-container">
+    <!-- <div class="search-container">
         <h3>Find Your Ideal Hostel</h3>
         <form method="POST" action="">
             <div class="search-box">
@@ -165,7 +165,7 @@ $conn->close();
                 
             </div>
         </form>
-    </div>
+    </div> -->
 
 <div class="result-container" id="resultContainer">
         <div class="result-image" id="hostelImage"></div>

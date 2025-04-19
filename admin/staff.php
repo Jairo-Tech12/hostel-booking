@@ -98,11 +98,7 @@ if (isset($_GET['logout'])) {
                 <a href="register-staff.php" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Add Staff</a>
             </div>
 
-            <!-- Search Box -->
-            <div class="mb-3">
-                <input type="text" id="search" class="form-control" placeholder="🔍 Search by Name...">
-            </div>
-
+            
             <!-- Staff Table -->
             <div class="table-responsive">
                 <table class="table table-bordered table-striped">

@@ -174,7 +174,7 @@ $result = $conn->query($sql);
             </a>
         </li> 
         <li class="nav-item">
-    <a class="nav-link" href="issue-item.php"> 
+    <a class="nav-link" href="assign-items.php"> 
         <i class="bi bi-check-circle"></i> Issued Items  
     </a>
 </li>

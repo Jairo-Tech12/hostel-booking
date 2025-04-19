@@ -180,7 +180,7 @@ $conn->close();
 </div>
 
 <!-- SEARCH SECTION -->
-<div class="search-container">
+<!-- <div class="search-container">
         <h3>Find Your Ideal Hostel</h3>
         <form method="POST" action="">
             <div class="search-box">
@@ -198,7 +198,7 @@ $conn->close();
                 
             </div>
         </form>
-    </div>
+    </div> -->
 
 <?php echo $result_html; ?>
 <p>
@@ -210,10 +210,10 @@ $conn->close();
             $hostel_images = [
                 "Victoria Hostel" => ["images/victoria/vic4.jpg", "images/victoria/vic1.jpg", "images/victoria/vic.jpg", "images/victoria/gate.jpg"],
                 "Turkwel Hostel" => ["images/turkwel/tur.jpg", "images/turkwel/tur1.jpg", "images/turkwel/tur2.jpg", "images/turkwel/tur3.jpg"],
-                "Baringo Hostel" => ["images/baringo/bar.jpg", "images/baringo/bar1.jpg", "images/baringo/bar2.jpg", "images/baringo/bar3.jpg"],
+                "Baringo Hostel" => ["images/baringo/bar.jpg", "images/baringo/bar1.jpg", "images/baringo/bar2.jpg", "images/baringo/bar4.jpg"],
                 "Athi Hostel" => ["images/athi/athi1.jpg", "images/athi/athi3.jpg", "images/athi/athu2.jpg", "images/athi/athi4.jpg"],
                 "Yatta Hostel" => ["images/yatta/yatta.jpg", "images/yatta/yatta1.jpg", "images/yatta/yatta2.jpg", "images/yatta/yatta3.jpg"],
-                "Magadi Hostel" => ["images/magadi/maga.jpg", "images/magadi/maga1.jpg", "images/magadi/maga2.jpg", "images/magadi/maga3.jpg"],
+                "Magadi Hostel" => ["images/magadi/maga.jpg", "images/magadi/maga1.jpg", "images/magadi/maga4.jpg", "images/magadi/maga3.jpg"],
                 "Turkana Hostel" => ["images/turkana/tur.jpg", "images/turkana/tur1.jpg", "images/turkana/tur.jpg", "images/turkana/tur3.jpg"],
                 "Elementaita Hostel" => ["images/elementaita/ele1.jpg", "images/elementaita/ele4.jpg", "images/elementaita/ele2.jpg", "images/elementaita/ele3.jpg"]
             ];

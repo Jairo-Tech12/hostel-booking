@@ -94,10 +94,7 @@ $result = $conn->query($sql);
                 <a href="register-students.php" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Add Student</a>
             </div>
 
-            <!-- Search Box -->
-            <div class="mb-3">
-                <input type="text" id="search" class="form-control" placeholder="🔍 Search by Name or Registration Number...">
-            </div>
+        
 
             <!-- Students Table -->
             <div class="table-responsive">

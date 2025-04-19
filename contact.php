@@ -239,7 +239,7 @@ $conn->close();
         </button>
 </div>
 <p>
-<div class="search-container">
+<!-- <div class="search-container">
         <h3>Find Your Ideal Hostel</h3>
         <form method="POST" action="">
             <div class="search-box">
@@ -264,7 +264,7 @@ $conn->close();
         <div class="result-title" id="hostelName"></div>
         <p class="result-details" id="hostelDetails"></p>
     </div>
-<?php echo $result_html; ?>
+<?php echo $result_html; ?> -->
 <p>
 
 <div class="wrapper">
